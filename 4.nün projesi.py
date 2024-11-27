@@ -53,7 +53,7 @@ class ProductHelper:
             raise FileNotFoundError(f"{file_path} bulunamadı.")
         
         product_list = []
-        with open(file_path, "r") as file:
+        with open(file_path, "r", encoding="utf-8") as file:
             for line in file:
                 data = line.strip().split(",")
                 if len(data) == 3:
@@ -69,24 +69,43 @@ class ProductHelper:
 
     @staticmethod
     def get_total_balance(product_list):
-        total = sum([product.get_total_price() for product in product_list])
+        total = sum(product.get_total_price() for product in product_list)
         return total * 1.20  # %20 KDV ekleniyor
+
+    @staticmethod
+    def create_product_file(file_path):
+        products = [
+            "Elma, 5.0, 10",
+            "Armut, 4.5, 15",
+            "Çilek, 20.0, 5",
+            "Portakal, 6.0, 8",
+            "Hatalıveri",
+            "Karpuz, -10, 1"
+        ]
+        with open(file_path, "w", encoding="utf-8") as file:
+            file.write("\n".join(products))
+        print(f"{file_path} dosyası başarıyla oluşturuldu.")
 
 
 def main():
     file_path = "product.txt"
     
+    # Dosyayı oluştur
+    ProductHelper.create_product_file(file_path)
+    
     try:
+        # Ürünleri dosyadan yükle
         products = ProductHelper.create_item_from_text(file_path)
-        print("Ürünler başarıyla yüklendi:")
+        print("\nÜrünler başarıyla yüklendi:")
         for product in products:
             print(product)
         
+        # Toplam ödeme miktarını hesapla
         total_balance = ProductHelper.get_total_balance(products)
-        print(f"Toplam ödeme miktarı (KDV dahil): {total_balance:.2f} TL")
+        print(f"\nToplam ödeme miktarı (KDV dahil): {total_balance:.2f} TL")
     except Exception as e:
         print(f"Bir hata oluştu: {e}")
 
 
 if _name_ == "_main_":
-    main()
+    main()
