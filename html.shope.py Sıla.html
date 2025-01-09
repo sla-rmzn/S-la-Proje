@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+        nav ul li {
+            margin: 0 15px;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+        }
+        nav ul li input {
+            padding: 5px;
+        }
+        .container {
+            display: flex;
+            flex: 1;
+        }
+        aside {
+            width: 200px;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        aside h2 {
+            margin-top: 0;
+        }
+        aside ul {
+            list-style: none;
+            padding: 0;
+        }
+        aside ul li {
+            margin: 10px 0;
+            cursor: pointer;
+            color: #007BFF;
+        }
+        main {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+        }
+        .product {
+            border: 1px solid #ddd;
+            margin: 10px;
+            padding: 10px;
+            text-align: center;
+            width: calc(25% - 40px);
+            box-sizing: border-box;
+        }
+        .product img {
+            width: 100%;
+            height: auto;
+        }
+        .product h2 {
+            margin: 0;
+        }
+        .product p {
+            margin: 5px 0;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        /* Sepete Eklendi Bildirimi */
+        #cartNotification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: none;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Fatura</a></li>
+                <li><a href="#">Princ</a></li>
+                <li><a href="#">About</a></li>
+                <li><input type="text" placeholder="Arama..."></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="container">
+        <aside>
+            <h2>Kategoriler</h2>
+            <ul id="categories">
+                <li onclick="showProducts('all')">Tüm Ürünler</li>
+                <li onclick="showProducts('laptop')">Dizüstü Bilgisayar</li>
+                <li onclick="showProducts('desktop')">Masaüstü Bilgisayar</li>
+                <li onclick="showProducts('gaming')">Gaming Bilgisayar</li>
+            </ul>
+        </aside>
+        <main>
+            <div id="products">
+                <!-- Ürünler burada listelenecek -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Sepete Eklendi Bildirimi -->
+    <div id="cartNotification">Sepete Eklendi!</div>
+
+    <script>
+        const products = {
+            laptop: [
+                { name: 'Laptop 1', price: 1000, image: 'https://cdn.vatanbilgisayar.com/Upload/PRODUCT/casper/thumb/148078-8_small.jpg' },
+                { name: 'Laptop 2', price: 1500, image: 'https://resim.reedukkan.com/1400002/1400002/reeder-d19-dizustu-bilgisayar-01b4a37bbdbd.jpg' },
+            ],
+            desktop: [
+                { name: 'Desktop 1', price: 800, image: 'https://www.atombilisim.com.tr/Data/EditorFiles/blog/12-05-2023/masaustu-bilgisayar/masaustu-pc-fiyatlari.jpg' },
+                { name: 'Desktop 2', price: 1200, image: 'https://cdn.vatanbilgisayar.com/Upload/PRODUCT/aidata/thumb/143715-1-2_small.jpg' },
+            ],
+            gaming: [
+                { name: 'Gaming PC 1', price: 2000, image: 'https://m.media-amazon.com/images/I/815P1vN3HpL.jpg' },
+                { name: 'Gaming PC 2', price: 2500, image: 'https://img-itopya.mncdn.com/cdn/1000/yeni-proje-2024-05-09t170913819-fdfd06.jpg' },
+            ],
+        };
+
+        function showProducts(category) {
+            const productsDiv = document.getElementById('products');
+            productsDiv.innerHTML = ''; // Önceki ürünleri temizle
+
+            let itemsToShow = [];
+            if (category === 'all') {
+                for (const key in products) {
+                    itemsToShow = itemsToShow.concat(products[key]);
+                }
+            } else {
+                itemsToShow = products[category];
+            }
+
+            // Ürünleri göster
+            itemsToShow.forEach(product => {
+                const productDiv = document.createElement('div');
+                productDiv.className = 'product';
+
+                const productImg = document.createElement('img');
+                productImg.src = product.image;
+
+                const productName = document.createElement('h2');
+                productName.textContent = product.name;
+
+                const productPrice = document.createElement('p');
+                productPrice.textContent = 'Fiyat: $' + product.price;
+
+                const addToCartButton = document.createElement('button');
+                addToCartButton.textContent = 'Sepete Ekle';
+                addToCartButton.onclick = () => addToCart(product.name, product.price);
+
+                productDiv.appendChild(productImg);
+                productDiv.appendChild(productName);
+                productDiv.appendChild(productPrice);
+                productDiv.appendChild(addToCartButton);
+
+                productsDiv.appendChild(productDiv);
+            });
+        }
+
+        let cart = [];
+        let total = 0;
+
+        function addToCart(productName, price) {
+            cart.push({ name: productName, price: price });
+            total += price;
+            updateCart();
+            showCartNotification(); // Sepete Eklendi bildirimini göster
+        }
+
+        function updateCart() {
+            console.log('Sepet güncellendi:', cart);
+            console.log('Toplam:', total);
+        }
+
+        function showCartNotification() {
+            const notification = document.getElementById('cartNotification');
+            notification.style.display = 'block'; // Bildirimi göster
+
+            // 3 saniye sonra bildirimi gizle
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        // Başlangıçta tüm ürünleri göstermek için
+        showProducts('all');
+    </script>
+</body>
+</html>
